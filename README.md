@@ -1,4 +1,4 @@
-# Install prometheus and Grafana in Kubernetes Cluster
+# Install Prometheus, Grafana and Kafka apps in Kubernetes Cluster
 
 ## Usage
 
