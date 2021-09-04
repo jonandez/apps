@@ -1,0 +1,66 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kafka-producer
+  labels:
+    app: kafka-producer
+
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: kafka-producer
+  name: kafka-producer
+  labels:
+    app: kafka-producer
+# Replica set
+spec:
+  revisionHistoryLimit: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-producer
+# Pods
+  template:
+    metadata:
+      labels:
+        app: kafka-producer
+    spec:
+      containers:
+      - name: kafka-producer
+        image: registry.hub.docker.com/josegrelnx/kafka_producer:latest
+        ports:
+          - containerPort: 80
+        resources:
+          requests:
+            memory: 100Mi
+            cpu: 100m
+          limits:
+            memory: 500Mi
+            cpu: 500m
+        env:
+        - name: TOPIC_NAME
+          value: "input"
+        - name: KAFKA_SERVER
+          value: "172.16.16.150:9092"
+
+# Create service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: kafka-producer
+  name: kafka-producer-node-port
+  labels:
+    app: kafka-producer
+spec:
+  type: NodePort
+  selector:
+    app: kafka-producer
+  ports:
+    - protocol: TCP
+      port: 8045
+      targetPort: 8045
+      name: port1
